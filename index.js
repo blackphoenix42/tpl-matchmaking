@@ -8,7 +8,7 @@ app.listen(port, () => console.log(`TPL Matchmaking Server listening at http://l
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-mongoose.connect("mongodb://127.0.0.1:27017/tpl-matchmaking", {                             // Connecting to MongoDb Server
+mongoose.connect("mongodb+srv://phoenix:tpl@cluster0.vtaen.mongodb.net/tpl-matchmaking?retryWrites=true&w=majority", {                             // Connecting to MongoDb Server
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
