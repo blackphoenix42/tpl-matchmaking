@@ -1,0 +1,24 @@
+{
+  "name": "tpl-matchmaking",
+  "version": "1.0.0",
+  "description": "Matchmaking Server For TPL Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "Sanket Nighot, Ayush Yadav",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "browserify": "^17.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.3",
+    "upgrade-node-modules": "^1.3.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
