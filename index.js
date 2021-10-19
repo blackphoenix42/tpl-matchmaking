@@ -8,7 +8,18 @@ app.listen(port, () => console.log(`TPL Matchmaking Server listening at http://l
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-mongoose.connect("mongodb+srv://phoenix:tpl@cluster0.vtaen.mongodb.net/tpl-matchmaking?retryWrites=true&w=majority", {                             // Connecting to MongoDb Server
+
+// MongoDb Localhost
+// mongoose.connect("mongodb://127.0.0.1:27017/tpl-matchmaking", {                             // Connecting to MongoDb Server
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+// }).then(() => {
+//     console.log("MongoDB Database Conncted ...");
+// });
+
+// MongoDb Atlas
+
+mongoose.connect("mongodb+srv://phoenix:tpl@cluster0.vtaen.mongodb.net/tpl-matchmaking?retryWrites=true&w=majority", {// Connecting to MongoDb Server
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -74,7 +85,8 @@ app.get('/player-game=:game&player=:player', async (req, res) => {
 			gameid: gameid,
 			player1: req.params.player,
 			player2: "",
-			winner: ""
+			p1_score: "",
+			p2_score: ""
 		}
 		newgameledger.splice(0, 0, newgame);
 		let newgamedata = await GameModel.findOneAndUpdate({name: req.params.game}, {gamesledger: newgameledger}, { new: true });
@@ -102,8 +114,9 @@ app.get('/player-game=:game&player=:player', async (req, res) => {
 });
 
 
-app.post('/updatewinner', async (req, res) => {
-	let data = await GameModel.findOne({name: req.body.name});
+app.post('/updatescore', async (req, res) => {
+
+	let data = await GameModel.findOne({name: req.body.game});
 	let gameid = req.body.gameid;
 	let newgameledger = data.gamesledger;
 	let gameindex = 0;
@@ -113,7 +126,44 @@ app.post('/updatewinner', async (req, res) => {
 			break;
 		}
 	}
-	newgameledger[gameindex].winner = req.body.winner;
-	newgamedata = await GameModel.findOneAndUpdate({name: req.body.name}, {gamesledger: newgameledger}, { new: true });
-	res.send("Winner Updated");
+	if (newgameledger[gameindex].player1 == req.body.player) {
+		newgameledger[gameindex].p1_score = req.body.p_score;
+		newgamedata = await GameModel.findOneAndUpdate({name: req.body.game}, {gamesledger: newgameledger}, { new: true });
+		res.send("Score Added")
+	} else if (newgameledger[gameindex].player2 == req.body.player){
+		newgameledger[gameindex].p2_score = req.body.p_score;
+		newgamedata = await GameModel.findOneAndUpdate({name: req.body.game}, {gamesledger: newgameledger}, { new: true });
+		res.send("Score Added")
+	} else {
+		res.send("Player/Game Not Found").statusCode(404)
+	}
+});
+
+app.get('/getresult-game=:game&gameid=:gameid', async (req, res) => {
+
+	let data = await GameModel.findOne({name: req.params.game});
+	let gameid = req.params.gameid;
+	let newgameledger = data.gamesledger;
+	let gameindex = 0;
+	for (let i = 0; newgameledger.length; i++ ){
+		if (newgameledger[i].gameid == gameid) {
+			gameindex = i;
+			break;
+		}
+	}
+
+	if (newgameledger[gameindex].p1_score > newgameledger[gameindex].p2_score) {
+		res.send({
+			result: newgameledger[gameindex].player1
+		})
+	} else if (newgameledger[gameindex].p1_score < newgameledger[gameindex].p2_score) {
+		res.send({
+			result: newgameledger[gameindex].player2
+		})
+	} else {
+		res.send({
+			result: "Draw"
+		})
+	}
+
 });
