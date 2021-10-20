@@ -141,29 +141,36 @@ app.post('/updatescore', async (req, res) => {
 
 app.get('/getresult-game=:game&gameid=:gameid', async (req, res) => {
 
-	let data = await GameModel.findOne({ name: req.params.game });
-	let gameid = req.params.gameid;
-	let newgameledger = data.gamesledger;
-	let gameindex = 0;
-	for (let i = 0; newgameledger.length; i++) {
-		if (newgameledger[i].gameid == gameid) {
-			gameindex = i;
-			break;
-		}
-	}
+	let counter = 5000;
 
-	if (newgameledger[gameindex].p1_score > newgameledger[gameindex].p2_score) {
-		res.send({
-			result: newgameledger[gameindex].player1
-		})
-	} else if (newgameledger[gameindex].p1_score < newgameledger[gameindex].p2_score) {
-		res.send({
-			result: newgameledger[gameindex].player2
-		})
-	} else {
-		res.send({
-			result: "Draw"
-		})
+	while (counter != 0) {
+		counter += 1;
+		let data = await GameModel.findOne({ name: req.params.game });
+		let gameid = req.params.gameid;
+		let newgameledger = data.gamesledger;
+		let gameindex = 0;
+		for (let i = 0; newgameledger.length; i++) {
+			if (newgameledger[i].gameid == gameid) {
+				gameindex = i;
+				break;
+			}
+		}
+		if (newgameledger[gameindex].p1_score != "" && newgameledger[gameindex].p2_score != "") {
+			if (newgameledger[gameindex].p1_score > newgameledger[gameindex].p2_score) {
+				res.send({
+					result: newgameledger[gameindex].player1
+				})
+			} else if (newgameledger[gameindex].p1_score < newgameledger[gameindex].p2_score) {
+				res.send({
+					result: newgameledger[gameindex].player2
+				})
+			} else {
+				res.send({
+					result: "Draw"
+				})
+			}
+		}
+
 	}
 
 });
