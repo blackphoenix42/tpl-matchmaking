@@ -21,7 +21,8 @@ app.use(express.urlencoded({ extended: false }));
 
 mongoose.connect("mongodb+srv://phoenix:tpl@cluster0.vtaen.mongodb.net/tpl-matchmaking?retryWrites=true&w=majority", {// Connecting to MongoDb Server
 	useNewUrlParser: true,
-	useUnifiedTopology: true
+	useUnifiedTopology: true,
+	useCreateIndex: true,
 }).then(() => {
 	console.log("MongoDB Database Conncted ...");
 });
