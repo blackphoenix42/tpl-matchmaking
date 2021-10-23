@@ -93,7 +93,7 @@ app.get('/player-game=:game&player=:player', async (req, res) => {
 		let newgamedata = await GameModel.findOneAndUpdate({ name: req.params.game }, { gamesledger: newgameledger }, { new: true });
 		newgamedata = await GameModel.findOneAndUpdate({ name: req.params.game }, { waitlist: tempwaitlist }, { new: true });
 		let counter = 5000;
-		while (counter != 0) {
+		while (true) {
 			counter += 1;
 			let newdata = await GameModel.findOne({ name: req.params.game });
 			let findgameledger = newdata.gamesledger;
@@ -144,7 +144,7 @@ app.get('/getresult-game=:game&gameid=:gameid', async (req, res) => {
 
 	let counter = 5000;
 
-	while (counter != 0) {
+	while (true) {
 		counter += 1;
 		let data = await GameModel.findOne({ name: req.params.game });
 		let gameid = req.params.gameid;
